@@ -1,18 +1,76 @@
 package com.domain;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Rocket {
 	
-	String codeId;
-	int amountPropellants;
-	Double velocity;
-	List<Propellant> listPropellants = new ArrayList<>();
+	private String codeId;
+	private Integer amountPropellants, maximumPower = 0, currentPower = 0;
+	private Integer velocity = 0;
+	private List<Propellant> listPropellants = new ArrayList<>();
 
 	public Rocket(String codeId, int amountPropellants) {
 		this.codeId = codeId;
 		this.amountPropellants = amountPropellants;
+	}
+	
+	public void speedUp() {
+		int powerNow = 0;
+		for (Propellant p : listPropellants) {
+			powerNow += p.setAcceleration(true);
+		}
+		currentPower = powerNow;
+		
+	}
+	
+	public void speedDown(int targetPower) {
+		int powerNow = 0;
+		for (Propellant p : listPropellants) {
+			powerNow += p.setAcceleration(false);
+		}
+		currentPower = powerNow;
+	}
+	
+	public int calcPowerNecessary(int desiredVelocity) {
+		Double calc = Math.pow((desiredVelocity-getVelocity())/100, 2);
+		int necessaryPower = (int) Math.round(calc);
+		return necessaryPower;
+	}
+	
+	public int getVelocity() {
+		setVelocity();
+		return velocity;
+	}
+	
+	private void setVelocity() {
+		Double calc = velocity + 100 * Math.sqrt(this.getCurrentPower());
+		velocity = (int) Math.round(calc);
+	}
+	
+	public int getCurrentPower() {
+		setCurrentPower();
+		return currentPower;
+	}
+	
+	private void setCurrentPower() {
+		int powerNow = 0;
+		for (Propellant p : listPropellants) {
+			powerNow += p.getCurrentPower();
+		}
+		currentPower = powerNow;
+	}
+
+	public int getMaximumPower() {
+		setMaximumPower();
+		return maximumPower;
+	}
+
+	private void setMaximumPower() {
+		for (Propellant p : listPropellants) {
+			maximumPower += p.getMaximumPower();
+		}
 	}
 
 	public String getCodeId() {
@@ -29,14 +87,6 @@ public class Rocket {
 
 	public void setAmountPropellants(int amountPropellants) {
 		this.amountPropellants = amountPropellants;
-	}
-
-	public Double getVelocity() {
-		return velocity;
-	}
-
-	public void setVelocity(Double velocity) {
-		this.velocity = velocity;
 	}
 
 	public List<Propellant> getListPropellants() {
@@ -57,6 +107,13 @@ public class Rocket {
 		builder.append(codeId);
 		builder.append(": ");
 		builder.append(listPropellants);
+		builder.append(" {V:");
+		builder.append(getVelocity());
+		builder.append(" - P:");
+		builder.append(getCurrentPower());
+		builder.append("/");
+		builder.append(getMaximumPower());
+		builder.append("}");
 		return builder.toString();
 	}
 	

@@ -2,7 +2,7 @@ package com.domain;
 
 public class Propellant {
 	
-	int maximumPower, currentPower = 0;
+	private int maximumPower, currentPower = 0;
 
 	public Propellant(int maximumPower) {
 		this.maximumPower = maximumPower;
@@ -26,17 +26,20 @@ public class Propellant {
 		}
 	}
 
-	public void setAcceleration(boolean isAccelerating) {
+	public int setAcceleration(boolean isAccelerating) {
 		if (isAccelerating && currentPower < maximumPower) {
 			currentPower++;			
 		} else if (!isAccelerating || currentPower > 0) {
 			currentPower--;
 		}
+		return currentPower;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		builder.append(currentPower);
+		builder.append("/");
 		builder.append(maximumPower);
 		return builder.toString();
 	}

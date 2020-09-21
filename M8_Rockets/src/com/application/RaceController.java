@@ -9,6 +9,7 @@ import com.domain.*;
 public class RaceController {
 	
 	private RocketsRepository repository = new RocketsRepository();
+	public Rocket player1, player2;
 	
 	public RaceController() {}
 	
@@ -56,6 +57,8 @@ public class RaceController {
 		rocket.addListPropellants(new Propellant(30));
 		rocket.addListPropellants(new Propellant(10));
 		repository.addRocket(rocket);
+		player1 = repository.getRockets().get(0);
+		player2 = repository.getRockets().get(1);
 		
 	}
 
