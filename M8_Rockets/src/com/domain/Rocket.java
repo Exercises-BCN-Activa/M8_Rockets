@@ -14,6 +14,7 @@ public class Rocket implements Runnable {
 	private int velocity;
 	private List<Propellant> listPropellants;
 	private RacesRepository race;
+	private long elapsed;
 	
 	public Rocket(String codeId,  RacesRepository race) {
 		this.codeId = codeId;
@@ -64,7 +65,13 @@ public class Rocket implements Runnable {
 	}
 
 	public int getVelocity() {
+		setVelocity();
 		return velocity;
+	}
+	
+	public void setVelocity() {
+		Double calc = velocity + 100*Math.sqrt(getCurrentPower());
+		velocity = (int) Math.abs(calc);
 	}
 
 	public List<Propellant> getListPropellants() {
@@ -75,6 +82,15 @@ public class Rocket implements Runnable {
 		listPropellants.add(propellant);
 	}
 	
+	
+	public long getElapsed() {
+		return elapsed;
+	}
+
+	public void setElapsed(long start) {
+		this.elapsed = System.currentTimeMillis()-start;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -88,14 +104,21 @@ public class Rocket implements Runnable {
 		builder.append("/");
 		builder.append(getMaximumPower());
 		builder.append("}");
+		if (elapsed!=0) {			
+			builder.append(" - " + elapsed + " milliseconds");
+		}
 		return builder.toString();
 	}
 	
+	@Override
 	public void run() {	
+		long start = System.currentTimeMillis();
 		while (getTargetPower() != getCurrentPower()) {			
 			for (Propellant propellant : listPropellants) {
 				new Thread(propellant).start();
-			}
+			}	
+			setElapsed(start);
+			System.out.println(toString());
 		}
 	}
 

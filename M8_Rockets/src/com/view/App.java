@@ -6,10 +6,11 @@ public class App {
 
 	public static void main(String[] args) {
 		
-		RaceController race = new RaceController(25);
+		RaceController race = new RaceController(65);
 		
 		race.testeDataBase();
 		race.showRockets();
+		race.startRace();
 		
 		
 		

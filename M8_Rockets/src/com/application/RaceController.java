@@ -1,9 +1,6 @@
 package com.application;
 
 import com.persistence.RacesRepository;
-
-import java.util.Iterator;
-
 import com.domain.*;
 
 
@@ -13,6 +10,21 @@ public class RaceController {
 	
 	public RaceController(int power) {
 		this.repository = new RacesRepository(power);
+	}
+	
+	public void startRace() {
+		for (Rocket rocket : repository.getRockets()) {
+			new Thread(rocket).start();
+		}
+		
+	}
+	
+	public void showRockets() {
+		if (!repository.getRockets().isEmpty()) {
+			for (Rocket rocket : repository.getRockets()) {
+				System.out.println(rocket);				
+			}
+		}
 	}
 	
 	public void createRocket() {
@@ -33,18 +45,6 @@ public class RaceController {
 		Propellant propellant = new Propellant(maximumPower, rocket);
 		return propellant;
 	}
-	
-	public void showRockets() {
-		if (!repository.getRockets().isEmpty()) {
-			Iterator<Rocket> it = repository.getRockets().iterator();
-			while (it.hasNext()) {
-				Rocket rocket = it.next();
-				System.out.println(rocket);				
-			}
-		}
-	}
-	
-	
 	
 	public void testeDataBase() {
 		Rocket rocket = new Rocket("32WESSDS", repository);
