@@ -1,52 +1,45 @@
 package com.domain;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rocket {
+import com.persistence.RacesRepository;
+
+public class Rocket implements Runnable {
 	
 	private String codeId;
-	private Integer amountPropellants, maximumPower = 0, currentPower = 0;
-	private Integer velocity = 0;
-	private List<Propellant> listPropellants = new ArrayList<>();
-
-	public Rocket(String codeId, int amountPropellants) {
+	private int maximumPower;
+	private int currentPower;
+	private int targetPower;
+	private int velocity;
+	private List<Propellant> listPropellants;
+	private RacesRepository race;
+	
+	public Rocket(String codeId,  RacesRepository race) {
 		this.codeId = codeId;
-		this.amountPropellants = amountPropellants;
+		this.maximumPower = 0;
+		this.currentPower = 0;
+		this.targetPower = race.getGoal();
+		this.velocity = 0;
+		this.listPropellants = new ArrayList<>();
+		this.race = race;
 	}
-	
-	public void speedUp() {
+
+	public String getCodeId() {
+		return codeId;
+	}
+
+	public int getMaximumPower() {
+		setMaximumPower();
+		return maximumPower;
+	}
+
+	private void setMaximumPower() {
 		int powerNow = 0;
 		for (Propellant p : listPropellants) {
-			powerNow += p.setAcceleration(true);
+			powerNow += p.getMaximumPower();
 		}
-		currentPower = powerNow;
-		
-	}
-	
-	public void speedDown(int targetPower) {
-		int powerNow = 0;
-		for (Propellant p : listPropellants) {
-			powerNow += p.setAcceleration(false);
-		}
-		currentPower = powerNow;
-	}
-	
-	public int calcPowerNecessary(int desiredVelocity) {
-		Double calc = Math.pow((desiredVelocity-getVelocity())/100, 2);
-		int necessaryPower = (int) Math.round(calc);
-		return necessaryPower;
-	}
-	
-	public int getVelocity() {
-		setVelocity();
-		return velocity;
-	}
-	
-	private void setVelocity() {
-		Double calc = velocity + 100 * Math.sqrt(this.getCurrentPower());
-		velocity = (int) Math.round(calc);
+		maximumPower = powerNow;
 	}
 	
 	public int getCurrentPower() {
@@ -62,39 +55,20 @@ public class Rocket {
 		currentPower = powerNow;
 	}
 
-	public int getMaximumPower() {
-		setMaximumPower();
-		return maximumPower;
+	public int getTargetPower() {
+		return targetPower;
+	}
+	
+	public void setTargetPower() {
+		targetPower = race.getGoal();
 	}
 
-	private void setMaximumPower() {
-		for (Propellant p : listPropellants) {
-			maximumPower += p.getMaximumPower();
-		}
-	}
-
-	public String getCodeId() {
-		return codeId;
-	}
-
-	public void setCodeId(String codeId) {
-		this.codeId = codeId;
-	}
-
-	public int getAmountPropellants() {
-		return amountPropellants;
-	}
-
-	public void setAmountPropellants(int amountPropellants) {
-		this.amountPropellants = amountPropellants;
+	public int getVelocity() {
+		return velocity;
 	}
 
 	public List<Propellant> getListPropellants() {
 		return listPropellants;
-	}
-
-	public void setListPropellants(List<Propellant> listPropellants) {
-		this.listPropellants = listPropellants;
 	}
 
 	public void addListPropellants(Propellant propellant) {
@@ -117,4 +91,12 @@ public class Rocket {
 		return builder.toString();
 	}
 	
+	public void run() {	
+		while (getTargetPower() != getCurrentPower()) {			
+			for (Propellant propellant : listPropellants) {
+				new Thread(propellant).start();
+			}
+		}
+	}
+
 }
