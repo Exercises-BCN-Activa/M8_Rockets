@@ -5,12 +5,25 @@ import com.persistence.Race;
 import com.domain.*;
 
 
+/**
+ * class that performs the whole application
+ * @author faunoguazina
+ *
+ */
 public class RaceController {
 	
-	private Race repository = new Race();
+	private Race repository = new Race(); //creates a repository and a race
 	
-	public RaceController() {}
+	public RaceController() {} //empty builder
 	
+	/**
+	 * function that starts the whole competition.
+	 * first check if there are registered rounds,
+	 * then triggers setter goal for each round,
+	 * prints on the console which round will perform,
+	 * buckle for fires each rocket in one thread,
+	 * join method in try / catch to avoid confusion between rockets and rounds
+	 */
 	public void startRace() {
 		if (!repository.getRounds().isEmpty()) {
 			for (int i : repository.getRounds()) {
@@ -19,7 +32,7 @@ public class RaceController {
 				for (Rocket rocket : repository.getRockets()) {
 					if (!rocket.getListPropellants().isEmpty()) {
 						rocket.setTargetPower();
-						System.out.println("------> "+i+" - "+rocket.getCodeId()+"\n");
+						System.out.println("\nto ------> "+i+" - Rocket: "+rocket.getCodeId()+"\n");
 						Thread t = new Thread(rocket);
 						t.start();
 						try {t.join();} catch (InterruptedException e) {return;}							
@@ -31,6 +44,9 @@ public class RaceController {
 		}
 	}
 	
+	/**
+	 * prints all registered rockets
+	 */
 	public void showRockets() {
 		if (!repository.getRockets().isEmpty()) {
 			System.out.println("\nThe rockets for this competition will be:\n");
@@ -40,6 +56,13 @@ public class RaceController {
 		}
 	}
 	
+	/**
+	 * insert rounds into the races, filling your list 
+	 * with whole numbers greater than one,
+	 * first asks how many rounds you want to register,
+	 * then a buckle goes to introduce the power of each round.
+	 * finally prints out which rounds the rockets will perform.
+	 */
 	public void insertRounds() {
 		String stringRound = Utilities.input3cases("how many laps do you want to insert in the race?", 1);
 		if (!stringRound.equalsIgnoreCase("NulL")) {
@@ -55,6 +78,11 @@ public class RaceController {
 		}
 	}
 	
+	/**
+	 * method that creates rockets, requests name and quantity of propellants,
+	 * if the user does not insert thrusters properly, the rocket is not created.
+	 * 
+	 */
 	public void createRocket() {
 		String codeId = Utilities.input3cases("Enter the code name of the rocket", 0); 
 		if (!codeId.equalsIgnoreCase("NulL")) {
@@ -80,6 +108,9 @@ public class RaceController {
 		}
 	}
 	
+	/**
+	 * simple database that is inserted if the user does not insert any rocket
+	 */
 	public void testeDataBase() {
 		Rocket rocket = new Rocket("32WESSDS", repository);
 		rocket.addListPropellants(new Propellant(10, rocket));
