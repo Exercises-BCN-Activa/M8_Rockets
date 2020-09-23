@@ -6,13 +6,12 @@ public class App {
 
 	public static void main(String[] args) {
 		
-		RaceController race = new RaceController(65);
-		
+		RaceController race = new RaceController();
+		race.insertRounds();
+		race.createRocket();
 		race.testeDataBase();
 		race.showRockets();
 		race.startRace();
-		
-		
 		
 		
 

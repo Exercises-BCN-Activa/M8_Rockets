@@ -3,7 +3,7 @@ package com.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.persistence.RacesRepository;
+import com.persistence.Race;
 
 public class Rocket implements Runnable {
 	
@@ -13,10 +13,10 @@ public class Rocket implements Runnable {
 	private int targetPower;
 	private int velocity;
 	private List<Propellant> listPropellants;
-	private RacesRepository race;
+	private Race race;
 	private long elapsed;
 	
-	public Rocket(String codeId,  RacesRepository race) {
+	public Rocket(String codeId,  Race race) {
 		this.codeId = codeId;
 		this.maximumPower = 0;
 		this.currentPower = 0;
@@ -104,22 +104,25 @@ public class Rocket implements Runnable {
 		builder.append("/");
 		builder.append(getMaximumPower());
 		builder.append("}");
-		if (elapsed!=0) {			
-			builder.append(" - " + elapsed + " milliseconds");
-		}
 		return builder.toString();
 	}
 	
 	@Override
-	public void run() {	
-		long start = System.currentTimeMillis();
-		while (getTargetPower() != getCurrentPower()) {			
+	public void run() {
+		long start;
+		while (getTargetPower() != getCurrentPower() && (getCurrentPower()<getMaximumPower()||getTargetPower()<getMaximumPower())) { 
+			start = System.currentTimeMillis();
 			for (Propellant propellant : listPropellants) {
 				new Thread(propellant).start();
 			}	
 			setElapsed(start);
-			System.out.println(toString());
+			System.out.println(toString() + " - " + elapsed + "ms");
+			try {Thread.sleep(100);} catch (InterruptedException e) {return;}
 		}
+		if (getCurrentPower()==getMaximumPower() && getTargetPower()>getMaximumPower()) {
+			System.out.println("\n"+codeId+" cannot accelerate ends at the speed indicated by lack of power\n");
+		}
+		
 	}
-
+	
 }

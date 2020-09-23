@@ -31,20 +31,16 @@ public class Propellant implements Runnable{
 	}
 
 	@Override
-	public void run() {
-		if (rocket.getTargetPower() != rocket.getCurrentPower()) {
+	public void run() {	
+		if (rocket.getTargetPower() > rocket.getCurrentPower() && currentPower < maximumPower) {
 			
-			if (rocket.getTargetPower() > currentPower && currentPower < maximumPower) {
-				
-				currentPower++;
-				
-			} else if (rocket.getTargetPower() < currentPower && currentPower > 0) {
-				
-				currentPower--;
-			}
-		}
-		
-		
+			currentPower++;
+			
+		} else if (rocket.getTargetPower() < rocket.getCurrentPower() && currentPower > 0) {
+			
+			currentPower--;
+			
+		} 
 	}
 	
 
